@@ -1,28 +1,34 @@
-﻿#define frame_width 10
-#define frame_height 10
+﻿#define frame_width 50
+#define frame_height 20
+#define ITERATE_TIME 170
+
 #include <iostream>
+#include <windows.h>
+
 using std::cout;
 using std::endl;
+using std::string;
 
-enum class cellLife {DEAD, ALIVE};
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+COORD coordScreen = { 0, 0 };    // home for the cursor
 
 int main()
 {
     /* initialize game board with bool[4][3] */
     /* you are able to control the input stage here before the input interface has been designed */
-
-    const bool board[frame_height][frame_width] = // input board
+    system("cls");
+    bool board[frame_height][frame_width] = // input board
     {
-        {0, 1, 0, 0, 1, 0, 1, 1, 1, 1},
-        {0, 0, 1, 0, 1, 1, 1, 0, 1, 1},
-        {1, 1, 1, 0, 1, 0, 1, 1, 1, 0},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
-        {1, 1, 1, 0, 1, 0, 1, 1, 1, 0},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
-        {1, 1, 1, 0, 1, 0, 1, 1, 1, 0},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
-        {1, 1, 1, 0, 1, 0, 1, 1, 1, 0},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
+        {0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0},
+        {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1},
+        {0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1},
+        {1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1},
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1},
     };
 
     /* Allocate a dynamic 2 dim array
@@ -37,116 +43,142 @@ int main()
         }
     }
     */
-    bool n_board[frame_height][frame_width];
-    
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 3; j++) {
-            n_board[i][j] = board[i][j];
+    bool n_board[frame_height][frame_width] = {0, 0};
+    bool original_board[frame_height][frame_width];
+
+    for (int i = 0; i < frame_height; i++) {
+        for (int j = 0; j < frame_width; j++) {
+            original_board[i][j] = board[i][j];
         }
     }
 
+    
 
     static int life_counts_cell = 0;
-
-    for (int i = 0; i <= frame_height-1; i++) {
-        for (int j = 0; j <= frame_width-1; j++) {
-            if (i > 0 && j > 0 && i < frame_height - 1 && j < frame_width - 1) { // when cursors are inside the grid board.
-                if (board[i - 1][j] ) life_counts_cell++;
-                if (board[i - 1][j - 1]) life_counts_cell++;
-                if (board[i][j - 1]) life_counts_cell++;
-                if (board[i - 1][j + 1]) life_counts_cell++;
-                if (board[i + 1][j - 1]) life_counts_cell++;
-                if (board[i + 1][j]) life_counts_cell++;
-                if (board[i][j + 1]) life_counts_cell++;
-                if (board[i + 1][j + 1]) life_counts_cell++;
+    static int iteration_times = 0;
+    do {
+        
+        for (int i = 0; i <= frame_height - 1; i++) {
+            for (int j = 0; j <= frame_width - 1; j++) {
+                if (i > 0 && j > 0 && i < frame_height - 1 && j < frame_width - 1) { // when cursors are inside the grid board.
+                    if (board[i - 1][j]) life_counts_cell++;
+                    if (board[i - 1][j - 1]) life_counts_cell++;
+                    if (board[i][j - 1]) life_counts_cell++;
+                    if (board[i - 1][j + 1]) life_counts_cell++;
+                    if (board[i + 1][j - 1]) life_counts_cell++;
+                    if (board[i + 1][j]) life_counts_cell++;
+                    if (board[i][j + 1]) life_counts_cell++;
+                    if (board[i + 1][j + 1]) life_counts_cell++;
+                }
+                else if (i == 0 && j == 0) { // Left Upper Corner
+                    if (board[i][j + 1]) life_counts_cell++;
+                    if (board[i + 1][j]) life_counts_cell++;
+                    if (board[i + 1][j + 1]) life_counts_cell++;
+                }
+                else if (i == frame_height - 1 && j == 0) { // Left Bottom Corner
+                    if (board[i][j + 1]) life_counts_cell++;
+                    if (board[i - 1][j]) life_counts_cell++;
+                    if (board[i - 1][j + 1]) life_counts_cell++;
+                }
+                else if (i == frame_height - 1 && j == frame_width - 1) { // Right buttom corner
+                    if (board[i - 1][j - 1]) life_counts_cell++;
+                    if (board[i - 1][j]) life_counts_cell++;
+                    if (board[i][j - 1]) life_counts_cell++;
+                }
+                else if (i == 0 && j == frame_width - 1) { // Right Upper Corner
+                    if (board[i][j - 1]) life_counts_cell++;
+                    if (board[i - 1][j]) life_counts_cell++;
+                    if (board[i + 1][j - 1]) life_counts_cell++;
+                }
+                else if (i > 0 && i < frame_height - 1 && j == 0) {// Left borderline without corner blocks OK
+                    if (board[i + 1][j]) life_counts_cell++;
+                    if (board[i - 1][j]) life_counts_cell++;
+                    if (board[i][j + 1]) life_counts_cell++;
+                    if (board[i - 1][j + 1]) life_counts_cell++;
+                    if (board[i + 1][j + 1]) life_counts_cell++;
+                }
+                else if (i > 0 && i < frame_height - 1 && j == frame_width - 1) {// Right borderline without corner blocks ?
+                    if (board[i - 1][j]) life_counts_cell++;
+                    if (board[i + 1][j]) life_counts_cell++;
+                    if (board[i][j - 1]) life_counts_cell++;
+                    if (board[i + 1][j - 1]) life_counts_cell++;
+                    if (board[i - 1][j - 1]) life_counts_cell++;
+                }
+                else if (j > 0 && j < frame_width - 1 && i == 0) {// Upper borderline without corner blocks OK
+                    if (board[i + 1][j]) life_counts_cell++;
+                    if (board[i + 1][j - 1]) life_counts_cell++;
+                    if (board[i + 1][j + 1]) life_counts_cell++;
+                    if (board[i][j + 1]) life_counts_cell++;
+                    if (board[i][j - 1]) life_counts_cell++;
+                }
+                else if (j > 0 && j < frame_width - 1 && i == frame_height - 1) {// Bottom borderline without corner blocks ?
+                    if (board[i - 1][j]) life_counts_cell++;
+                    if (board[i - 1][j + 1]) life_counts_cell++;
+                    if (board[i - 1][j - 1]) life_counts_cell++;
+                    if (board[i][j + 1]) life_counts_cell++;
+                    if (board[i][j - 1]) life_counts_cell++;
+                }
+                if (life_counts_cell < 2 || life_counts_cell > 3) {
+                    n_board[i][j] = false;
+                }
+                else if (life_counts_cell == 3) {
+                    n_board[i][j] = true;
+                }
+                life_counts_cell = 0;
             }
-            else if(i == 0 && j == 0){ // Left Upper Corner
-                if (board[i][j + 1]) life_counts_cell++;
-                if (board[i+1][j]) life_counts_cell++;
-                if (board[i + 1][j + 1]) life_counts_cell++;
-            }
-            else if (i == frame_height - 1 && j == 0) { // Left Bottom Corner
-                if (board[i][j+1]) life_counts_cell++;
-                if (board[i-1][j]) life_counts_cell++;
-                if (board[i-1][j+1]) life_counts_cell++;
-            }
-            else if (i == frame_height - 1 && j == frame_width - 1) { // Right buttom corner
-                if (board[i - 1][j - 1]) life_counts_cell++;
-                if (board[i - 1][j]) life_counts_cell++;
-                if (board[i][j - 1]) life_counts_cell++;
-            }
-            else if (i == 0 && j == frame_width - 1) { // Right Upper Corner
-                if (board[i][j - 1]) life_counts_cell++;
-                if (board[i - 1][j]) life_counts_cell++;
-                if (board[i + 1][j - 1]) life_counts_cell++;
-            }
-            else if (i > 0 && i < frame_height - 1 && j == 0) {// Left borderline without corner blocks OK
-                if (board[i + 1][j]) life_counts_cell++;
-                if (board[i - 1][j]) life_counts_cell++;
-                if (board[i][j + 1]) life_counts_cell++;
-                if (board[i - 1][j + 1]) life_counts_cell++;
-                if (board[i + 1][j + 1]) life_counts_cell++;
-            }
-            else if (i > 0 && i < frame_height - 1 && j == frame_width - 1) {// Right borderline without corner blocks ?
-                if (board[i - 1][j]) life_counts_cell++;
-                if (board[i + 1][j]) life_counts_cell++;
-                if (board[i][j - 1]) life_counts_cell++;
-                if (board[i + 1][j - 1]) life_counts_cell++;
-                if (board[i - 1][j - 1]) life_counts_cell++;
-            }
-            else if (j > 0 && j < frame_width - 1 && i == 0) {// Upper borderline without corner blocks OK
-                if (board[i + 1][j]) life_counts_cell++;
-                if (board[i + 1][j - 1]) life_counts_cell++;
-                if (board[i + 1][j + 1]) life_counts_cell++;
-                if (board[i][j + 1]) life_counts_cell++;
-                if (board[i][j - 1]) life_counts_cell++;
-            }
-            else if (j > 0 && j < frame_width - 1 && i == frame_height - 1) {// Bottom borderline without corner blocks ?
-                if (board[i - 1][j]) life_counts_cell++;
-                if (board[i - 1][j + 1]) life_counts_cell++;
-                if (board[i - 1][j - 1]) life_counts_cell++;
-                if (board[i][j + 1]) life_counts_cell++;
-                if (board[i][j - 1]) life_counts_cell++;
-                cout << board[i - 1][j] << endl;
-                cout << board[i - 1][j + 1] << endl;
-                cout << board[i - 1][j - 1] << endl;
-                cout << board[i][j + 1] << endl;
-                cout << board[i][j - 1] << endl;
-            }
-
-            cout << "i:"<< i << " j:" << j << endl;
-            cout << "DEBUG Espressions" << endl;
-            cout << (i > 0 && i < frame_height - 1 && j == 0) << endl;
-            cout << (i > 0 && i < frame_height - 1 && j == frame_width - 1) << endl;
-            if (life_counts_cell < 2 || life_counts_cell > 3) {
-                n_board[i][j] = false;
-            }
-            else if (life_counts_cell == 3){
-                n_board[i][j] = true;
-            }
-            life_counts_cell = 0;
         }
-    }
+        iteration_times++;
+        cout << "\nITERATOR IS RUNNING..." << endl;
+        for (int i = 0; i < frame_height; i++) {
+            for (int j = 0; j < frame_width; j++) {
+                board[i][j] = n_board[i][j];
+            }
+        }
+        Sleep(30);
+        //system("cls");
 
-    cout << "original" << endl;
+        // A better way to clean console without flashing
+        
+        SetConsoleCursorPosition(hConsole, coordScreen);
 
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
-            if (board[i][j])
+        cout << "-------------- " << iteration_times - 1 << " --------------" << endl;
+        for (int i = 0; i < frame_height; i++) {
+            for (int j = 0; j < frame_width; j++) {
+                if (n_board[i][j])
+                    cout << "■";
+                else cout << "□";
+            }
+            cout << endl;
+        }
+        for (int i = 0; i < 2 * frame_width * iteration_times / ITERATE_TIME; i++) {
+            cout << ">";
+        }
+    } while (!(iteration_times - 1 == ITERATE_TIME));
+    cout << endl;
+
+    system("cls");
+
+    cout << "original array" << endl;
+
+    for (int i = 0; i < frame_height; i++) {
+        for (int j = 0; j < frame_width; j++) {
+            if (original_board[i][j])
                 cout << "■";
             else cout << "□";
         }
         cout << endl;
     }
-
-    cout << "after first attempt" << endl;
-
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
+    cout << "result" << endl;
+    for (int i = 0; i < frame_height; i++) {
+        for (int j = 0; j < frame_width; j++) {
             if (n_board[i][j])
                 cout << "■";
             else cout << "□";
         }
         cout << endl;
     }
+
+    cout << "Process stopped after " << ITERATE_TIME << " times of iterations" << endl;
+    system("pause >nul");
+    return 0;
 }
