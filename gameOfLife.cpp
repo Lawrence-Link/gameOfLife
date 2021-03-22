@@ -1,6 +1,7 @@
 ﻿#define frame_width 50
 #define frame_height 20
-#define ITERATE_TIME 170
+#define ITERATE_TIME 100
+#define DELAY_BETWEEN_ITERATION 30
 
 #include <iostream>
 #include <windows.h>
@@ -17,17 +18,19 @@ int main()
     /* initialize game board with bool[4][3] */
     /* you are able to control the input stage here before the input interface has been designed */
     system("cls");
+    srand(time(0));
     bool board[frame_height][frame_width] = // input board
+    
     {
-        {0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
-        {0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
-        {1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
-        {1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
-        {0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0},
-        {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1},
-        {0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1},
-        {1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1},
+        {0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0},
+        {1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1},
+        {0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0},
+        {1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1},
+        {0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1},
+        {1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1},
         {0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1},
     };
 
@@ -45,14 +48,18 @@ int main()
     */
     bool n_board[frame_height][frame_width] = {0, 0};
     bool original_board[frame_height][frame_width];
-
+    /*
+    for (int i = 0; i < frame_height; i++) {
+        for (int j = 0; j < frame_width; j++) {
+            board[i][j] = original_board[i][j] = rand()%2;
+        }
+    }
+    */
     for (int i = 0; i < frame_height; i++) {
         for (int j = 0; j < frame_width; j++) {
             original_board[i][j] = board[i][j];
         }
     }
-
-    
 
     static int life_counts_cell = 0;
     static int iteration_times = 0;
@@ -134,7 +141,7 @@ int main()
                 board[i][j] = n_board[i][j];
             }
         }
-        Sleep(30);
+        Sleep(DELAY_BETWEEN_ITERATION);
         //system("cls");
 
         // A better way to clean console without flashing
@@ -153,7 +160,7 @@ int main()
         for (int i = 0; i < 2 * frame_width * iteration_times / ITERATE_TIME; i++) {
             cout << ">";
         }
-    } while (!(iteration_times - 1 == ITERATE_TIME));
+    } while (!(iteration_times == ITERATE_TIME));
     cout << endl;
 
     system("cls");
@@ -168,7 +175,7 @@ int main()
         }
         cout << endl;
     }
-    cout << "result" << endl;
+    cout << "result " << iteration_times << endl;
     for (int i = 0; i < frame_height; i++) {
         for (int j = 0; j < frame_width; j++) {
             if (n_board[i][j])
@@ -178,7 +185,7 @@ int main()
         cout << endl;
     }
 
-    cout << "Process stopped after " << ITERATE_TIME << " times of iterations" << endl;
+    cout << "Process has stopped after " << ITERATE_TIME << " time(s) of iterations" << endl;
     system("pause >nul");
     return 0;
 }

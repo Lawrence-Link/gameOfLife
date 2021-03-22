@@ -1,2 +1,3 @@
 ﻿  gameOfLife.cpp
+C:\Users\LAW\source\repos\gameOfLife\gameOfLife.cpp(21,15): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
   gameOfLife.vcxproj -> C:\Users\LAW\source\repos\gameOfLife\Debug\gameOfLife.exe
